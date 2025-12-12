@@ -92,5 +92,7 @@ To develop this plugin further, make sure you can compile CoreDNS locally and ge
 
 Put `replace github.com/cloud66-oss/coredns_mysql => LOCAL_PATH_TO_THE_SOURCE_CODE` at the end of the `go.mod` file in CoreDNS code. 
 
+If you're using Nix you can execute `nix develop` to enter an environment with the Go tools available.
+
 Pull requests and bug reports are welcome!
 
