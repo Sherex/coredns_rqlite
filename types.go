@@ -15,7 +15,7 @@ type Record struct {
 	Ttl        uint32
 	Content    string
 
-	handler *CoreDNSMySql
+	handler *CoreDNSRqlite
 }
 
 type ARecord struct {

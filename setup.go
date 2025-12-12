@@ -20,16 +20,16 @@ const (
 )
 
 func init() {
-	caddy.RegisterPlugin("mysql", caddy.Plugin{
+	caddy.RegisterPlugin("rqlite", caddy.Plugin{
 		ServerType: "dns",
 		Action:     setup,
 	})
 }
 
 func setup(c *caddy.Controller) error {
-	r, err := mysqlParse(c)
+	r, err := rqliteParse(c)
 	if err != nil {
-		return plugin.Error("mysql", err)
+		return plugin.Error("rqlite", err)
 	}
 
 	dnsserver.GetConfig(c).AddPlugin(func(next plugin.Handler) plugin.Handler {
@@ -40,8 +40,8 @@ func setup(c *caddy.Controller) error {
 	return nil
 }
 
-func mysqlParse(c *caddy.Controller) (*CoreDNSMySql, error) {
-	mysql := CoreDNSMySql{
+func rqliteParse(c *caddy.Controller) (*CoreDNSRqlite, error) {
+	rqlite := CoreDNSRqlite{
 		TablePrefix: "coredns_",
 		Ttl:         300,
 	}
@@ -53,67 +53,67 @@ func mysqlParse(c *caddy.Controller) (*CoreDNSMySql, error) {
 			switch c.Val() {
 			case "dsn":
 				if !c.NextArg() {
-					return &CoreDNSMySql{}, c.ArgErr()
+					return &CoreDNSRqlite{}, c.ArgErr()
 				}
-				mysql.Dsn = c.Val()
+				rqlite.Dsn = c.Val()
 			case "table_prefix":
 				if !c.NextArg() {
-					return &CoreDNSMySql{}, c.ArgErr()
+					return &CoreDNSRqlite{}, c.ArgErr()
 				}
-				mysql.TablePrefix = c.Val()
+				rqlite.TablePrefix = c.Val()
 			case "max_lifetime":
 				if !c.NextArg() {
-					return &CoreDNSMySql{}, c.ArgErr()
+					return &CoreDNSRqlite{}, c.ArgErr()
 				}
 				var val time.Duration
 				val, err = time.ParseDuration(c.Val())
 				if err != nil {
 					val = defaultMaxLifeTime
 				}
-				mysql.MaxLifetime = val
+				rqlite.MaxLifetime = val
 			case "max_open_connections":
 				if !c.NextArg() {
-					return &CoreDNSMySql{}, c.ArgErr()
+					return &CoreDNSRqlite{}, c.ArgErr()
 				}
 				var val int
 				val, err = strconv.Atoi(c.Val())
 				if err != nil {
 					val = defaultMaxOpenConnections
 				}
-				mysql.MaxOpenConnections = val
+				rqlite.MaxOpenConnections = val
 			case "max_idle_connections":
 				if !c.NextArg() {
-					return &CoreDNSMySql{}, c.ArgErr()
+					return &CoreDNSRqlite{}, c.ArgErr()
 				}
 				var val int
 				val, err = strconv.Atoi(c.Val())
 				if err != nil {
 					val = defaultMaxIdleConnections
 				}
-				mysql.MaxIdleConnections = val
+				rqlite.MaxIdleConnections = val
 			case "zone_update_interval":
 				if !c.NextArg() {
-					return &CoreDNSMySql{}, c.ArgErr()
+					return &CoreDNSRqlite{}, c.ArgErr()
 				}
 				var val time.Duration
 				val, err = time.ParseDuration(c.Val())
 				if err != nil {
 					val = defaultZoneUpdateTime
 				}
-				mysql.zoneUpdateTime = val
+				rqlite.zoneUpdateTime = val
 			case "ttl":
 				if !c.NextArg() {
-					return &CoreDNSMySql{}, c.ArgErr()
+					return &CoreDNSRqlite{}, c.ArgErr()
 				}
 				var val int
 				val, err = strconv.Atoi(c.Val())
 				if err != nil {
 					val = defaultTtl
 				}
-				mysql.Ttl = uint32(val)
+				rqlite.Ttl = uint32(val)
 			default:
 				if c.Val() != "}" {
-					return &CoreDNSMySql{}, c.Errf("unknown property '%s'", c.Val())
+					return &CoreDNSRqlite{}, c.Errf("unknown property '%s'", c.Val())
 				}
 			}
 
@@ -124,7 +124,7 @@ func mysqlParse(c *caddy.Controller) (*CoreDNSMySql, error) {
 
 	}
 
-	db, err := mysql.db()
+	db, err := rqlite.db()
 	if err != nil {
 		return nil, err
 	}
@@ -135,13 +135,13 @@ func mysqlParse(c *caddy.Controller) (*CoreDNSMySql, error) {
 	}
 	defer db.Close()
 
-	mysql.tableName = mysql.TablePrefix + "records"
+	rqlite.tableName = rqlite.TablePrefix + "records"
 
-	return &mysql, nil
+	return &rqlite, nil
 }
 
-func (handler *CoreDNSMySql) db() (*sql.DB, error) {
-	db, err := sql.Open("mysql", os.ExpandEnv(handler.Dsn))
+func (handler *CoreDNSRqlite) db() (*sql.DB, error) {
+	db, err := sql.Open("rqlite", os.ExpandEnv(handler.Dsn))
 	if err != nil {
 		return nil, err
 	}

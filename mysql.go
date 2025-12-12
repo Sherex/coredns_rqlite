@@ -8,7 +8,7 @@ import (
 	"github.com/miekg/dns"
 )
 
-func (handler *CoreDNSMySql) findRecord(zone string, name string, types ...string) ([]*Record, error) {
+func (handler *CoreDNSRqlite) findRecord(zone string, name string, types ...string) ([]*Record, error) {
 	db, err := handler.db()
 	if err != nil {
 		return nil, err
@@ -60,7 +60,7 @@ func (handler *CoreDNSMySql) findRecord(zone string, name string, types ...strin
 // findWildcardRecords attempts to find wildcard records
 // recursively until it finds matching records.
 // e.g. x.y.z -> *.y.z -> *.z -> *
-func (handler *CoreDNSMySql) findWildcardRecords(zone string, name string, types ...string) ([]*Record, error) {
+func (handler *CoreDNSRqlite) findWildcardRecords(zone string, name string, types ...string) ([]*Record, error) {
 	const (
 		wildcard       = "*"
 		wildcardPrefix = wildcard + "."
@@ -81,7 +81,7 @@ func (handler *CoreDNSMySql) findWildcardRecords(zone string, name string, types
 	return handler.findRecord(zone, target, types...)
 }
 
-func (handler *CoreDNSMySql) loadZones() error {
+func (handler *CoreDNSRqlite) loadZones() error {
 	db, err := handler.db()
 	if err != nil {
 		return err
@@ -110,7 +110,7 @@ func (handler *CoreDNSMySql) loadZones() error {
 	return nil
 }
 
-func (handler *CoreDNSMySql) hosts(zone string, name string) ([]dns.RR, error) {
+func (handler *CoreDNSRqlite) hosts(zone string, name string) ([]dns.RR, error) {
 	recs, err := handler.findRecord(zone, name, "A", "AAAA", "CNAME")
 	if err != nil {
 		return nil, err

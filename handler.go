@@ -10,7 +10,7 @@ import (
 	"golang.org/x/net/context"
 )
 
-type CoreDNSMySql struct {
+type CoreDNSRqlite struct {
 	Next               plugin.Handler
 	Dsn                string
 	TablePrefix        string
@@ -26,7 +26,7 @@ type CoreDNSMySql struct {
 }
 
 // ServeDNS implements the plugin.Handler interface.
-func (handler *CoreDNSMySql) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (int, error) {
+func (handler *CoreDNSRqlite) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (int, error) {
 	state := request.Request{W: w, Req: r}
 
 	qName := state.Name()
@@ -129,9 +129,9 @@ func (handler *CoreDNSMySql) ServeDNS(ctx context.Context, w dns.ResponseWriter,
 }
 
 // Name implements the Handler interface.
-func (handler *CoreDNSMySql) Name() string { return "handler" }
+func (handler *CoreDNSRqlite) Name() string { return "handler" }
 
-func (handler *CoreDNSMySql) errorResponse(state request.Request, rCode int, err error) (int, error) {
+func (handler *CoreDNSRqlite) errorResponse(state request.Request, rCode int, err error) (int, error) {
 	m := new(dns.Msg)
 	m.SetRcode(state.Req, rCode)
 	m.Authoritative, m.RecursionAvailable, m.Compress = true, false, true
