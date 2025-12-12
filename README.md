@@ -64,15 +64,14 @@ https://rqlite.io/docs/quick-start/
 This plugin doesn't create or migrate database schema for its use yet. To create the database and tables, use the following table structure (note the table name prefix):
 
 ```sql
-CREATE TABLE `coredns_records` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-	`zone` VARCHAR(255) NOT NULL,
-	`name` VARCHAR(255) NOT NULL,
-	`ttl` INT DEFAULT NULL,
-	`content` TEXT,
-	`record_type` VARCHAR(255) NOT NULL,
-	PRIMARY KEY (`id`)
-) ENGINE = INNODB AUTO_INCREMENT = 6 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+CREATE TABLE coredns_records (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    zone TEXT NOT NULL,
+    name TEXT NOT NULL,
+    ttl INTEGER,
+    content TEXT,
+    record_type TEXT NOT NULL
+);
 ```
 
 ## Record setup
@@ -82,7 +81,7 @@ Each record served by this plugin, should belong to the zone it is allowed to se
 -- Insert batch #1
 INSERT INTO coredns_records (zone, name, ttl, content, record_type) VALUES
 ('example.org.', 'foo', 30, '{"ip": "1.1.1.1"}', 'A'),
-('example.org.', 'foo', '60', '{"ip": "1.1.1.0"}', 'A'),
+('example.org.', 'foo', 60, '{"ip": "1.1.1.0"}', 'A'),
 ('example.org.', 'foo', 30, '{"text": "hello"}', 'TXT'),
 ('example.org.', 'foo', 30, '{"host" : "foo.example.org.","priority" : 10}', 'MX');
 ```
