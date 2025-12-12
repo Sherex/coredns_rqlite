@@ -1,4 +1,4 @@
-package coredns_mysql
+package coredns_rqlite
 
 import (
 	"time"

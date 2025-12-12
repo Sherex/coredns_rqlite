@@ -1,4 +1,4 @@
-module github.com/cloud66-oss/coredns_mysql
+module github.com/Sherex/coredns_rqlite
 
 go 1.16
 
