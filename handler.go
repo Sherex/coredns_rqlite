@@ -3,11 +3,11 @@ package coredns_rqlite
 import (
 	"time"
 
+	"context"
 	"github.com/coredns/coredns/plugin"
 	"github.com/coredns/coredns/request"
-	_ "github.com/rqlite/gorqlite/stdlib"
 	"github.com/miekg/dns"
-	"golang.org/x/net/context"
+	_ "github.com/rqlite/gorqlite/stdlib"
 )
 
 type CoreDNSRqlite struct {
@@ -60,7 +60,7 @@ func (handler *CoreDNSRqlite) ServeDNS(ctx context.Context, w dns.ResponseWriter
 		records = append(records, recs...)
 	}
 
-    if qType == "SOA" {
+	if qType == "SOA" {
 		recsNs, err := handler.findRecord(qZone, qName, "NS")
 		if err != nil {
 			return handler.errorResponse(state, dns.RcodeServerFailure, err)
