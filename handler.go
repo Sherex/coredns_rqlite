@@ -5,7 +5,7 @@ import (
 
 	"github.com/coredns/coredns/plugin"
 	"github.com/coredns/coredns/request"
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/rqlite/gorqlite/stdlib"
 	"github.com/miekg/dns"
 	"golang.org/x/net/context"
 )
