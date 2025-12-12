@@ -1,17 +1,17 @@
-# MySQL
+# Rqlite
 
-MySQL backend for CoreDNS
+Rqlite backend for CoreDNS
 
 ## Name
-mysql - MySQL backend for CoreDNS
+rqlite - Rqlite backend for CoreDNS
 
 ## Description
 
-This plugin uses MySQL as a backend to store DNS records. These will then can served by CoreDNS. The backend uses a simple, single table data structure that can be shared by other systems to add and remove records from the DNS server. As there is no state stored in the plugin, the service can be scaled out by spinning multiple instances of CoreDNS backed by the same database.
+This plugin uses Rqlite as a backend to store DNS records. These will then can served by CoreDNS. The backend uses a simple, single table data structure that can be shared by other systems to add and remove records from the DNS server. As there is no state stored in the plugin, the service can be scaled out by spinning multiple instances of CoreDNS backed by the same database.
 
 ## Syntax
 ```
-mysql {
+rqlite {
     dsn DSN
     [table_prefix TABLE_PREFIX]
     [max_lifetime MAX_LIFETIME]
@@ -22,8 +22,8 @@ mysql {
 }
 ```
 
-- `dsn` DSN for MySQL as per https://github.com/go-sql-driver/mysql examples. You can use `$ENV_NAME` format in the DSN, and it will be replaced with the environment variable value.
-- `table_prefix` Prefix for the MySQL tables. Defaults to `coredns_`.
+- `dsn` DSN for Rqlite (ex. `http://100.70.0.4:4001`). You can use `$ENV_NAME` format in the DSN, and it will be replaced with the environment variable value.
+- `table_prefix` Prefix for the Rqlite tables. Defaults to `coredns_`.
 - `max_lifetime` Duration (in Golang format) for a SQL connection. Default is 1 minute.
 - `max_open_connections` Maximum number of open connections to the database server. Default is 10.
 - `max_idle_connections` Maximum number of idle connections in the database connection pool. Default is 10.
@@ -39,7 +39,7 @@ A, AAAA, CNAME, SOA, TXT, NS, MX, CAA and SRV.  Wildcard records are supported a
 Add this as an external plugin in `plugin.cfg` file: 
 
 ```
-mysql:github.com/cloud66-oss/coredns_mysql
+rqlite:github.com/Sherex/coredns_rqlite
 ```
 
 then run
@@ -50,6 +50,15 @@ $ go build
 ```
 
 Add any required modules to CoreDNS code as prompted.
+
+## Rqlite Setup
+1. Start rqlited
+```sh
+rqlited -node-id $(hostname) -http-addr 100.70.0.4:4001 -raft-addr 100.70.0.4:4002 ./node
+```
+For more detailed instructions refer to the official Rqlite docs.
+
+https://rqlite.io/docs/quick-start/
 
 ## Database Setup
 This plugin doesn't create or migrate database schema for its use yet. To create the database and tables, use the following table structure (note the table name prefix):
@@ -85,12 +94,12 @@ $ dig A MX foo.example.org
 ```
 
 ### Acknowledgements and Credits
-This plugin, is inspired by https://github.com/wenerme/coredns-pdsql and https://github.com/arvancloud/redis
+This plugin is a fork of https://github.com/go-sql-driver/mysql which was further inspired by https://github.com/wenerme/coredns-pdsql and https://github.com/arvancloud/redis
 
 ### Development 
-To develop this plugin further, make sure you can compile CoreDNS locally and get this repo (`go get github.com/cloud66-oss/coredns_mysql`). You can switch the CoreDNS mod file to look for the plugin code locally while you're developing it:
+To develop this plugin further, make sure you can compile CoreDNS locally and get this repo (`go get github.com/cloud66-oss/coredns_rqlite`). You can switch the CoreDNS mod file to look for the plugin code locally while you're developing it:
 
-Put `replace github.com/cloud66-oss/coredns_mysql => LOCAL_PATH_TO_THE_SOURCE_CODE` at the end of the `go.mod` file in CoreDNS code. 
+Put `replace github.com/cloud66-oss/coredns_rqlite => LOCAL_PATH_TO_THE_SOURCE_CODE` at the end of the `go.mod` file in CoreDNS code. 
 
 If you're using Nix you can execute `nix develop` to enter an environment with the Go tools available.
 
